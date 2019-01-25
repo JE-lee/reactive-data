@@ -3,7 +3,6 @@ import Dep from './dep'
 export default class Observe{
   constructor(ob){
     this.ob = ob
-    // 定义属性
     this.walk(ob)
   }
   walk(ob){
@@ -21,11 +20,20 @@ export function defineReactive(ob, key, val){
   Object.defineProperty(ob, key, {
     configurable: true,
     enumerable: true,
-    get: () => val,
+    get: () => {
+      if(Dep.target){
+        // 依赖收集
+        // Dep.target 是一个watcher
+        dep.addDep(Dep.target)
+      }
+      return val 
+    },
     set: newVal => {
+      if(newVal === val) return 
       val = newVal 
       // 如果新赋值的是个object
       childObserve = observe(val)
+      dep.notify()
     }
   })
 }

@@ -2,13 +2,16 @@ export default class Dep{
   constructor(){
     this.deps = []
   }
-  addDep(cb){
-    this.deps.push(cb)
+  // sub 是一个watcher
+  addDep(sub){
+    this.deps.push(sub)
   }
   notify(){
     this.update()
   }
   update(){
-    this.deps.forEach(cb => cb())
+    this.deps.forEach(sub => sub.update())
   }
 }
+
+Dep.target = null 
